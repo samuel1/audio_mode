@@ -3,7 +3,7 @@ One click audio configuration for linux
 
 
 ## About
-I tried pretty much every audio host out there, and running headless etc.  Before finding audio tweaks that sent me from jackd collapsing to x-run free
+I tried so many things, and running headless etc.  Before finding audio tweaks that really helped
 
 This script switches on those tweaks;  and switches them back off when done
 
@@ -13,9 +13,13 @@ This script switches on those tweaks;  and switches them back off when done
 
 
 ## Usage
-Maybe first check your configuration, using [realtimeconfigquickscan](http://wiki.linuxaudio.org/wiki/system_configuration)
+First check your configuration, using [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
 
-Then edit two functions in audio_mode.sh.  A simple setup would be:
+If you'd like/need to edit this script, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information on realtime audio configuration.  But I hope this script can get you a long way to one-click x-run freeness
+
+To make use of the script, download it, then maybe run `chmod u+x audio_mode.sh`. This will make it clickable and runnable with `./audio_mode.sh`
+
+But before running it, please configure it for your own setup.  Something like:
 
 ```bash
 setup_apps() {
@@ -32,7 +36,7 @@ You could then open and close whatever apps you like.  Alternatively:
 setup_apps() { guitarix; }
 ```
 
-Would run audio_mode until guitarix quits.  (auto-start jack from guitarix)
+Would run audio_mode until guitarix quits
 
 If you want to be able to quickly reboot your audio setup -- something crashes, or there's a loose connection, or whatever -- then you can get that with:
 
@@ -46,7 +50,7 @@ setup_apps() {
 ```
 
 ## Notes
-1. I've only tried this with lightdm.  Your computer configuration and installed kernel modules probably differ from mine.  I did get a big performance boost from removing unused kernel modules, but do edit the script however is appropriate for you
+1. I've only tried this with lightdm.  Your computer configuration and kernel modules probably differ from mine.  I did get a big performance boost from removing unused kernel modules, but do edit the script however is appropriate for you
 
 2. If running headless, then jumping back to the tty as X reloads can make it unhappy.  If this happens, try typing: `sudo lightdm service force-reload`
 
