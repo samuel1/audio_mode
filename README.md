@@ -15,7 +15,7 @@ This script switches on those tweaks;  and switches them back off when done
 ## Usage
 First check your configuration, try [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
 
-If you'd like/need to edit this script, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information.  Though I hope this script can get you a long way to one-click x-run freeness
+If you'd like/need to edit audio_mode, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information.  Though I hope this script can get you a long way to one-click x-run freeness
 
 To make use of the script, download it, then maybe run `chmod u+x audio_mode.sh`. This will make it clickable and runnable with `./audio_mode.sh`
 
