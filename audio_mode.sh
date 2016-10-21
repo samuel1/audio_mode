@@ -25,6 +25,9 @@ DM=/usr/sbin/lightdm
 # name of systemd service used to startup/shutdown X
 DMSERVICE=lightdm
 
+# let me sleep?
+SLEEP=false
+
 # stdout is hidden.  If you run this script from a terminal and desire to see
 # stdout + random messages, then change VERBOSE to true
 VERBOSE=false
@@ -172,13 +175,13 @@ control_services() {
 	sudo service network-manager $1 &
 	sudo service ntp $1 &
 	#sudo service wpa_supplicant $1 &
-	[ "$NETWORK" = false ] && sudo service networking $1
-	sudo systemctl $1 bluetooth
-	sudo systemctl $1 colord
-	sudo systemctl $1 accounts-daemon
-	sudo systemctl $1 cpufreqd
-	sudo systemctl $1 cpufrequtils
-	sudo systemctl $1 loadcpufreq
+	[ "$NETWORK" = false ] && sudo service networking $1 &
+	sudo systemctl $1 bluetooth &
+	sudo systemctl $1 colord &
+	sudo systemctl $1 accounts-daemon &
+	sudo systemctl $1 cpufreqd &
+	sudo systemctl $1 cpufrequtils &
+	sudo systemctl $1 loadcpufreq &
 	
 	# ModemManager
 	
@@ -212,14 +215,14 @@ control_services() {
 		
 keep_awake() {
 	# switch into presentation mode (i.e. dont sleep)
-	if [ "$X_USING" ]; then
+	[ "$SLEEP" = false ] && if [ "$X_USING" ]; then
 		if [ "`ps -axo comm | grep '^xfce'`" ]; then
 			# this only works for xfce
 			xfconf-query -c xfce4-power-manager \
 									 -p /xfce4-power-manager/presentation-mode -s $1
 		else
 			# a generic jiggle solution
-			# assumes computer will stay awake longer than a minute
+			# assumes computer can stay awake longer than a minute
 			if [ "$1" = true ]; then
 				xset s off -dpms
 				(while true; do
