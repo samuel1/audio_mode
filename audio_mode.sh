@@ -57,7 +57,7 @@ setup_interfaces__example() { setup_apps; }
 
 
 
-# ==THE SCRIPT==
+# ==EDIT THESE==
 
 setup_apps() {
 	# this is my actual setup
@@ -111,6 +111,10 @@ setup_interfaces() {
 
 
 
+
+# ==ACTUAL SCRIPT==
+# If the script isnt running: switch on VERBOSE=true,
+# run from a terminal, and edit the below...
 
 setup_reboot() {
 	REBOOT=''
@@ -209,11 +213,17 @@ keep_awake() {
 			xfconf-query -c xfce4-power-manager \
 									 -p /xfce4-power-manager/presentation-mode -s $1
 		else
-			# stops screen blanking, but the computer may still sleep/screensave
-			# you may want to add a kde/gnome/etc solution here
-			# or is there a generic way?
-			if [ "$1" = true ]; then xset s off -dpms
-			else xset s default +dpms; fi
+			# a generic jiggle solution
+			# assumes computer will stay awake longer than a minute
+			if [ "$1" = true ]; then
+				xset s off -dpms
+				(while true; do
+					 xdotool mousemove_relative --sync 1 1
+					 xdotool mousemove_relative --sync -- -1 -1
+					 sleep 60
+				 done) &
+				JPID=$!
+			else xset s default +dpms; safe_kill $JPID; fi
 		fi
 	else
 		# when running from a terminal (out of X)
