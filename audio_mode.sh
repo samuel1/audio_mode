@@ -70,8 +70,8 @@ setup_apps() {
 	NoGUI='--nogui'; [ "$X_USING" ] && NoGUI=''
 	guitarix $NoGUI --no-convolver-overload &
 	# try to restore midi/jack connections
-	sleep 4; for n in {1..5}; do
-		aj-snapshot -r /home/samuel/bin/guitarix.xml && break || sleep 4; done
+	(until [ "`pgrep guitarix`" ]; do sleep 2; done; sleep 2
+		aj-snapshot -r /home/samuel/bin/guitarix.xml) &
 
 	# Reboot audio apps (for quick recovery when live!)
 	# in X: holding eject key reboots audio
@@ -171,19 +171,27 @@ control_services() {
 	sudo service cron $1 &
 	sudo service network-manager $1 &
 	sudo service ntp $1 &
-	sudo service snapd $1 &
-	sudo service wpa_supplicant $1 &
-	[ "$NETWORK" = false ] && sudo service networking $1 &
-	# bluetooth ModemManager accounts-daemon
+	#sudo service wpa_supplicant $1 &
+	[ "$NETWORK" = false ] && sudo service networking $1
+	sudo systemctl $1 bluetooth
+	sudo systemctl $1 colord
+	sudo systemctl $1 accounts-daemon
+	sudo systemctl $1 cpufreqd
+	sudo systemctl $1 cpufrequtils
+	sudo systemctl $1 loadcpufreq
+	
+	# ModemManager
 	
 	sudo systemctl $1 cups.path
 	sudo systemctl $1 acpid.path
 	sudo systemctl $1 acpid.socket
 	sudo systemctl $1 avahi-daemon.socket 2>/dev/null
+	sudo systemctl $1 snapd.socket
 	if [ $1 = 'stop' ]; then
 		sudo service cups $1 &
 		sudo service acpid $1 &
 		sudo service avahi-daemon $1 2>/dev/null &
+		sudo systemctl $1 snapd &
 	fi
 
 	# if we're not using X, then save ourselves from its eye candy
@@ -198,11 +206,8 @@ control_services() {
 		:
 		#sudo killall console-kit-daemon
 		#sudo killall polkitd
-		# remount /dev/shm to prevent memory allocation errors
-		#sudo mount -o remount,size=128M /dev/shm	
 		#killall dbus-daemon
 		#killall dbus-launch
-		#killall gvfsd
 	fi }
 		
 keep_awake() {
@@ -298,20 +303,19 @@ audio_mode() {
 		X_USING=`ps -ho args -p $PID | grep "$DM"`
 		[ "$X_USING" ] && break
 	done
+
+	# use PASS so we don't need to ask for the password again when exiting
+	echo $PASS | sudo -S printf '' 2>/dev/null
 	
 	# configure for audio performance
-	CPU=0
-	while [ $CPU -lt `nproc` ]; do
-		cpufreq-selector --cpu $CPU -g performance
-		CPU=$((CPU+1))
-	done
+	echo -n performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+	echo
 	SWAP=`cat /proc/sys/vm/swappiness`
-	# use PASS so we don't need to ask for the password again when exiting
-	echo $PASS | sudo -S sysctl -w vm.swappiness=5 2>/dev/null
+	sudo sysctl -w vm.swappiness=5 2>/dev/null
 	MODULES='r8169 ath9k uvcvideo videodev lp ppdev pata_acpi
 		brcmsmac brcmutil b43 bcma btusb'
-	# this line makes the difference between constant x-runs and silky smooth performance
 	sudo modprobe -r $MODULES
+	sudo modprobe snd-hrtimer
 	# increase the rtc timer frequency
 	RTC_FREQ=`cat /sys/class/rtc/rtc0/max_user_freq`
 	echo -n 3072 | sudo tee /sys/class/rtc/rtc0/max_user_freq
@@ -328,13 +332,11 @@ audio_mode() {
 	log 'Restoring non-audio setup...'
 
 	# reset computer configuration
-	CPU=0
-	while [ $CPU -lt `nproc` ]; do
-		cpufreq-selector --cpu $CPU -g ondemand
-		CPU=$((CPU+1))
-	done
-	echo $PASS | sudo -S sysctl -w vm.swappiness=$SWAP
+	echo -n ondemand | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+	echo
+	sudo sysctl -w vm.swappiness=$SWAP
 	sudo modprobe -a $MODULES
+	sudo modprobe -r snd-hrtimer
 	echo -n $RTC_FREQ | sudo tee /sys/class/rtc/rtc0/max_user_freq
 	be_nice 0
 	control_services start
