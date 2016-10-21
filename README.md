@@ -3,23 +3,23 @@ One click audio configuration for linux
 
 
 ## About
-I tried so many things, and running headless etc.  Before finding audio tweaks that really helped
+I tried so many things, like running headless etc.  Before finding audio tweaks that really helped
 
 This script switches on those tweaks;  and switches them back off when done
 
 * Audio can be quickly rebooted (for emergency live usage!)
 * Can be run within X, or without.  If without, then X is shutdown until audio_mode ends
-* The computer and screen are kept awake throughout
+* The computer and screen are optionally kept awake throughout
 
 
 ## Usage
-First check your configuration, using [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
+First check your configuration, try [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
 
-If you'd like/need to edit this script, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information on realtime audio configuration.  But I hope this script can get you a long way to one-click x-run freeness
+If you'd like/need to edit this script, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information.  But I hope this script can get you a long way to one-click x-run freeness
 
 To make use of the script, download it, then maybe run `chmod u+x audio_mode.sh`. This will make it clickable and runnable with `./audio_mode.sh`
 
-But before running it, please configure it for your own setup.  Something like:
+But before running, please configure it for your own setup.  Simply:
 
 ```bash
 setup_apps() {
@@ -30,7 +30,7 @@ Run whatever apps you like,  then close me to exit' \
 setup_interfaces() { setup_apps; }
 ```
 
-You could then open and close whatever apps you like.  Alternatively:
+You can then open and close whatever apps you like.  Alternatively:
 
 ```bash
 setup_apps() { guitarix; }
@@ -38,7 +38,7 @@ setup_apps() { guitarix; }
 
 Would run audio_mode until guitarix quits
 
-If you want to be able to quickly reboot your audio setup -- something crashes, or there's a loose connection, or whatever -- then you can get that with:
+If you want to be able to quickly reboot your audio setup — something crashes, or there's a loose connection, or whatever — then you can get that with:
 
 ```bash
 setup_apps() {
