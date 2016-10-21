@@ -2,14 +2,13 @@
 
 # ==INFO==
 # I tried pretty much every audio host out there, and running headless etc
-# before finding audio tweaks that sent me from jackd collapsing to x-run free
+# before finding audio tweaks that sent me from constant noise to x-run free
 
 # This script switches on those tweaks;  and switches them back off when done
 
-# If using audio_mode from within X, holding eject key can reboot the audio
-# (for emergency recovery during a performance!)
+# If using audio_mode from within X:  holding eject key can reboot the audio
 
-# When running headless.  X is shutdown for the duration (if it was active)
+# When running headless:  X is shutdown for the duration (if it was active)
 
 # NOTE: jumping back to the tty as X reloads can make it unhappy
 # if this happens, try typing: sudo lightdm service force-reload
@@ -33,7 +32,7 @@ SLEEP=false
 VERBOSE=false
 
 # Edit setup_apps() to run the audio apps you need
-# It must halt until you want the audio mode to end
+# The function must halt until you want the audio mode to end
 
 setup_apps__example() {
 	# open jack/apps.  ladish is one way to do it
@@ -54,9 +53,7 @@ Run whatever apps you like,  then close me to exit' \
 
 setup_interfaces__example() { setup_apps; }
 
-# When audio mode is active the computer wont sleep or dim the screen
-# but this is done for xfce and headless.  If you computer setup differs,
-# you might want to edit this and maybe elsewhere...
+
 
 
 
@@ -83,8 +80,7 @@ setup_apps() {
 	# so 'q' quits;  'r' reboots
 	
 	# pass it the pids of any apps to kill so they reboot nicely
-	# but ladish may not like you, so alternatively
-	# replace this line with something like "wait `pgrep guitarix`"
+	# but ladish may not like you
 	setup_reboot "`pgrep guitarix`"; }
 
 setup_interfaces() {
@@ -302,7 +298,7 @@ audio_mode() {
 	while true; do
 		PID=`ps -ho %P -p $PID`
 		[ $PID = 1 ] && break
-		# i am the fire starter
+		# i am the fire (X) starter
 		X_USING=`ps -ho args -p $PID | grep "$DM"`
 		[ "$X_USING" ] && break
 	done
