@@ -15,7 +15,7 @@
 
 
 # ==CONFIG==
-# Do our apps need the network?
+# do our apps need the network?
 NETWORK=false
 
 # path to the display manager
@@ -26,6 +26,11 @@ DMSERVICE=lightdm
 
 # let me sleep?
 SLEEP=false
+
+# key to reboot audio under X
+# on my computer 169=ejectkey.  To change the key, run
+# 'xev', and look for keycode NNN
+REBOOTKEY=169
 
 # stdout is hidden.  If you run this script from a terminal and desire to see
 # stdout + random messages, then change VERBOSE to true
@@ -119,14 +124,14 @@ setup_reboot() {
 	REBOOT=''
 	if [ "$X_USING" ]; then
 		(# make sure eject key is not being pressed
-			until [ `xinput --query-state 11 | grep '\[169\]=up'` ]; do sleep 3; done
+			until [ `xinput --query-state 11 | grep "\[$REBOOTKEY\]=up"` ]; do sleep 3; done
 			(sleep 2; echo \
 '--------------------
   quit app: exit
   hold ESC: reboot
 --------------------' >&2) &
 			# pause this sub-shell until eject key is held (for ~3 seconds)
-			until [ `xinput --query-state 11 | grep '\[169\]=down'` ]; do sleep 3; done
+			until [ `xinput --query-state 11 | grep "\[$REBOOTKEY\]=down"` ]; do sleep 3; done
 			# reboot our audio apps
 			safe_kill $1; xmessage 'Rebooting audio...' -buttons cancel) &
 		SPID=$!
