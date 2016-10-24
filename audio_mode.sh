@@ -70,7 +70,7 @@ setup_apps() {
 	#jackd -P80 --port-max 128 $INTERFACE --midi none &
 	#ecasound -c -Md rawmidi,/dev/snd/midiC1D0 -i jack,system -o jack,system -ea:230 -km:1,0,300,7,1 -E t >&2
 	#carla /home/samuel/bin/carla.carxp
-	
+
 	jackd -P80 --temporary --port-max 128 $INTERFACE --midi raw &
 	NoGUI='--nogui'; [ "$X_USING" ] && NoGUI=''
 	guitarix $NoGUI --no-convolver-overload &
@@ -139,12 +139,12 @@ setup_reboot() {
 		safe_kill $SPID
 	else
 		while [ "$REBOOT" = '' ]; do
-			(sleep 2; echo \
+			(sleep 2; printf -- \
 '-------------
   q: exit
   r: reboot
--------------' >&2) &
-			read -n1 REBOOT
+-------------' -- >&2) &
+			read -n1 REBOOT; echo >&2
 			if [ "$REBOOT" = 'r' ]; then safe_kill $1
 			elif [ "$REBOOT" != 'q' ]; then REBOOT=''; fi
 		done
