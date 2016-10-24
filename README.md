@@ -11,7 +11,7 @@ This script switches on those tweaks;  and switches them back off when done
 * Can be run within X, or without.  If without, then X is shutdown until audio_mode ends
 * The computer and screen are optionally kept awake throughout
 
-With and without X:
+With and without X:<br>
 <img src="screenshot2.png?raw=true" width="33%"> &nbsp; <img src="screenshot1.png?raw=true" width="33%">
 
 ## Usage
