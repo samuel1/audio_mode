@@ -11,6 +11,7 @@ This script switches on those tweaks;  and switches them back off when done
 * Can be run within X, or without.  If without, then X is shutdown until audio_mode ends
 * The computer and screen are optionally kept awake throughout
 
+![](screenshot1.png?raw=true "Running headless")![](screenshot1.png?raw=true "Running in X")
 
 ## Usage
 First check your configuration, try [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
