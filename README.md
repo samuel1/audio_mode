@@ -11,8 +11,8 @@ This script switches on those tweaks;  and switches them back off when done
 * Can be run within X, or without.  If without, then X is shutdown until audio_mode ends
 * The computer and screen are optionally kept awake throughout
 
-<table><tr><td>With X</td><td>And without</td></tr><tr><td>
-	<img src="screenshot2.png?raw=true" width="33%"></td><td><img src="screenshot1.png?raw=true" width="33%"></td></tr></table>
+With and without X:
+<img src="screenshot2.png?raw=true" width="33%"> &nbsp; <img src="screenshot1.png?raw=true" width="33%">
 
 ## Usage
 First check your configuration, try [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
