@@ -57,3 +57,5 @@ setup_apps() {
 2. If running headless, then jumping back to the tty as X reloads can make it unhappy.  If this happens, try typing: `sudo lightdm service force-reload`
 
 3. Check the script CONFIG section;  you may want to set `NETWORK=true` etc
+
+4. Wifi is shutdown while audio_mode is active (as it can cause x-runs).  To browse the web during audio_mode, try: `sudo service network-manager start`, or delete that line
