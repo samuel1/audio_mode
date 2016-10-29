@@ -23,17 +23,19 @@ Simply (1) run the script to enter audio mode.  Then (2) open and close any audi
 
 
 ### Further configuring audio_mode
-The rest of this section explains how to get live rebooting, and to automate the loading of jack/apps
+The rest of this section explains how to get live rebooting, and how to automate the loading of jack/apps
 
 However this requires ladish or a little scripting...
 
-Ladish is maybe the easier option:  Using Claudia, Gladish or another program: create a ladish studio, then fill it with apps, configure jack, and save the studio.  The studio manager will then be able to start/stop your studio from its menus
+Ladish is maybe the easier option:  Using Claudia, Gladish or another program, create a ladish studio, fill it with apps, configure jack, and save the studio.  The studio manager will then be able to start/stop your studio from its menus
 
 Once you've got this working, audio_mode will also be able to start/stop your studios.  To run a particular studio with audio_mode, simply run `./audio_mode.sh ladish my_studio_name`
 
+<br>
+
 The second option is to write a script yourself that loads and links the apps you want.  The script must block until you want audio mode to end.  You can run it with `./audio_mode.sh script /path/to/my/script.sh`
 
-The function `setup_guitarix()` within audio_mode.sh is an example of this. And shows how to get the advantages of live rebooting and 'auto-closing' audio_mode when an app quits.  Try it with `./audio_mode.sh guitarix`.  Note that it assumes youre starting jack separately, or from within guitarix
+The function `setup_guitarix()` within audio_mode.sh is an example of this. And shows how to get the advantages of live rebooting and 'auto-closing' audio_mode when you quit an app.  Try it with `./audio_mode.sh guitarix`.  Note that it assumes you're starting jack separately, or from within guitarix
 
 
 
@@ -59,12 +61,10 @@ You can then run audio_mode with one of:
 ~/bin/audio_mode/audio_mode.sh guitarix
 ```
 
-If you did clone to `~/bin`, and you want to add audio_mode to your applications menu, or make it clickable from your desktop, you can run:
+If you did clone to `~/bin` and you want to add audio_mode to your applications menu, or make it clickable from your desktop, you can run:
 ```bash
 ln -s ~/bin/audio_mode/audio_mode.desktop ~/.local/share/applications/audio_mode.desktop
-```
 
-```bash
 ln -s ~/bin/audio_mode/audio_mode.desktop ~/Desktop/audio_mode.desktop
 ```
 
