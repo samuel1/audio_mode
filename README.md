@@ -35,12 +35,12 @@ Once you've got this working, audio_mode will also be able to start/stop your st
 
 The second option is to write a script yourself that loads and links the apps you want.  The script must block until you want audio mode to end.  You can run it with `./audio_mode.sh script /path/to/my/script.sh`
 
-The function `setup_guitarix()` within audio_mode.sh is an example of this. And shows how to get the advantages of live rebooting and 'auto-closing' audio_mode when you quit an app.  Try it with `./audio_mode.sh guitarix`.  Note that it assumes you're starting jack separately, or from within guitarix
+The function `setup_guitarix()` within audio_mode.sh is an example of this. And shows how to get the advantages of live rebooting, and 'auto-closing' audio_mode when you quit an app.  Try it with `./audio_mode.sh guitarix`.  Note that it assumes you're starting jack separately, or from within guitarix
 
 
 
 ### Extra help
-First check your configuration, try [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
+Check your configuration with [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
 
 If you'd like/need to edit audio_mode.sh, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information.  Though I hope this script gets you a long way to one-click x-run freeness
 
@@ -48,13 +48,13 @@ If you'd like/need to edit audio_mode.sh, then see http://wiki.linuxaudio.org/wi
 
 ## Installation
 Create a `~/bin` folder if you dont have one, then:
-```bash
+```
 cd ~/bin
 git clone https://github.com/samuel1/audio_mode.git
 ```
 
 You can then run audio_mode with one of:
-```bash
+```
 ~/bin/audio_mode/audio_mode.sh
 ~/bin/audio_mode/audio_mode.sh ladish my_studio_name
 ~/bin/audio_mode/audio_mode.sh script /path/to/my_script.sh
@@ -62,7 +62,7 @@ You can then run audio_mode with one of:
 ```
 
 If you did clone to `~/bin` and you want to add audio_mode to your applications menu, or make it clickable from your desktop, you can run:
-```bash
+```
 ln -s ~/bin/audio_mode/audio_mode.desktop ~/.local/share/applications/audio_mode.desktop
 
 ln -s ~/bin/audio_mode/audio_mode.desktop ~/Desktop/audio_mode.desktop

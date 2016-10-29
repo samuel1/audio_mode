@@ -31,9 +31,10 @@ REBOOTKEY=169
 # stdout + random messages, then change VERBOSE to true
 VERBOSE=false
 
-# here are some optional setups.  Feel free to add your own :)
-# you can choose which one runs like so:
-# './audio_mode.sh default' or './audio_mode.sh ladish my_studio_name'
+
+## here are the setup functions to run when in audio_mode
+# simply write a setup_NAME() function to add a new one :)
+# then run it with './audio_mode.sh NAME'
 
 setup_default() {
 	message 'Audio mode active...
