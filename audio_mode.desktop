@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=audio mode
+Comment=Setup for low latency audio
+Exec=bash -c '/home/`id -un`/bin/audio_mode/audio_mode.sh'
+#Exec=bash -c '/home/`id -un`/bin/audio_mode/audio_mode.sh guitarix'
+#Exec=bash -c '/home/`id -un`/bin/audio_mode/audio_mode.sh script ~/my/script.sh'
+#Exec=bash -c '/home/`id -un`/bin/audio_mode/audio_mode.sh ladish my_studio_name'
+Terminal=false
+Icon=applications-multimedia
+Type=Application
+Categories=Audio;AudioVideo
