@@ -22,7 +22,7 @@ Simply (1) run the script to enter audio mode.  Then (2) open and close any audi
 
 
 
-### Further configuring audio_mode
+### Configuring audio_mode
 The rest of this section explains how to get live rebooting, and how to automate the loading of jack/apps
 
 However this requires ladish or a little scripting...
@@ -39,15 +39,25 @@ The function `setup_guitarix()` within audio_mode.sh is an example of this. And 
 
 
 
-### Extra help
+### Setting up for low latency
 Check your configuration with [realtimeconfigquickscan](https://github.com/raboof/realtimeconfigquickscan), and follow through what it says
 
-If you'd like/need to edit audio_mode.sh, then see http://wiki.linuxaudio.org/wiki/system_configuration for excellent information.  Though I hope this script gets you a long way to one-click x-run freeness
+Though audio_mode already does the (CPU Governors; swappiness; and 'audio' group) checks, so you can ignore those if you like
+
+[david.henningsson](http://voices.canonical.com/david.henningsson/2012/07/13/top-five-wrong-ways-to-fix-your-audio/) suggests not adding users to the audio group in multi-user systems.  So audio_mode adds it temporarily for commands/programs run through audio_mode.  But not for commands/programs started separately or by ladish
+
+If pulseaudio is installed, audio_mode will suspend it
+
+And will temporarily stops several services, including bluetooth, cups printing, cron scheduled tasks, wifi, etc.  If you need them, then comment them out.  The network service though is left running as several audio apps need it.  You can switch it off from the config section with `NETWORK=false`
+
+If you'd like to get into the details of low latency, then see [linuxaudio.org](http://wiki.linuxaudio.org/wiki/system_configuration) for excellent information
+
+If however there's a problem running audio_mode, particularly on an ubuntu system, then please let me know
 
 
 
 ## Installation
-Create a `~/bin` folder if you dont have one, then:
+Create a `~/bin` folder if you don't have one, then:
 ```
 cd ~/bin
 git clone https://github.com/samuel1/audio_mode.git
@@ -75,6 +85,6 @@ ln -s ~/bin/audio_mode/audio_mode.desktop ~/Desktop/audio_mode.desktop
 
 2. If running headless, then jumping back to the tty as X reloads can make it unhappy.  If this happens, try typing: `sudo lightdm service force-reload`
 
-3. Check the script CONFIG section;  you may want to set `NETWORK=true` etc
+3. Wifi is also shutdown while audio_mode is active (as it can cause x-runs).  To browse the web during audio_mode, try: `sudo service network-manager start`, or delete that line
 
-4. Wifi is also shutdown while audio_mode is active (as it can cause x-runs).  To browse the web during audio_mode, try: `sudo service network-manager start`, or delete that line
+4. Only one audio_mode can be run at a time, but if the second run starts just after the first has finished, and before my wifi widget fully restores itself... then the widget may crash.  You can use `nmcli g` instead, but its not as convenient

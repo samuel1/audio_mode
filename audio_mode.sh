@@ -14,7 +14,7 @@
 
 ## ==CONFIG==
 # do our apps need the network?
-NETWORK=false
+NETWORK=true
 
 # name of systemd service used to startup/shutdown X
 DMSERVICE=lightdm
@@ -26,6 +26,10 @@ SLEEP=false
 # on my computer 169=ejectkey.  To change the key, run
 # 'xev', and look for keycode NNN
 REBOOTKEY=169
+
+# only one audio_mode can run at a time
+# this file enforces that
+LOCK_FILE=/var/lock/audio_mode
 
 # stdout is hidden.  If you run this script from a terminal and desire to see
 # stdout + random messages, then change VERBOSE to true
@@ -212,6 +216,7 @@ handle_reboot() {
 		safe_kill `pgrep -f 'xmessage Rebooting audio...'`
 		## thankyou pulse for fixing our connection :)
 		# you may want to uncomment these dependng on why your audio is falling over
+		## no-longer good to do that, as this script now uses pasuspender
 		#pulseaudio --start
 		#pulseaudio --kill
 		$SETUP_CMD; fi }
@@ -275,8 +280,8 @@ control_services() {
 
 
 keep_awake() {
-	# switch into presentation mode (i.e. dont sleep)
 	[ "$SLEEP" = false ] && if [ "$X_USING" ]; then
+		# keep the computer awake during audio_mode
 		if [ "`ps -axo comm | grep '^xfce'`" ]; then
 			# this only works for xfce
 			xfconf-query -c xfce4-power-manager \
@@ -348,11 +353,11 @@ safe_kill() {
 	wait $1 2>/dev/null; }
 
 
-audio_mode() {
+audio_mode() {	
 	# stdout to /dev/null
 	[ "$VERBOSE" = false ] && exec 1>/dev/null
 	
-	# safely get root
+	## safely get root
 	if [ -f ~/bin/authinfo.py -a -f ~/.authinfo.gpg ]; then
 		PASS=`cd ~/bin; python -c 'import authinfo; print authinfo.get_password("jbook", "sudo", "root")'`
 	else PASS=`ssh-askpass`; fi
@@ -378,8 +383,14 @@ audio_mode() {
 		if [ $DMPID = $PID ]; then X_USING=true; break; fi
 	done
 
-		
-	# configure for audio performance
+	## make sure we're in audio group
+	id -Gn | grep audio || sudo newgrp audio
+
+	## check for pasuspender
+	# pasuspender needs an actual process.... so give it that
+	hash pasuspender && SETUP_CMD="pasuspender -- $($SETUP_CMD)"
+
+	## configure for audio performance
 	echo -n performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 	echo
 	local SWAP=`cat /proc/sys/vm/swappiness`
@@ -394,16 +405,15 @@ audio_mode() {
 	be_nice 15
 	keep_awake true
 	control_services stop
-	pulseaudio --kill 2>/dev/null
 	/etc/init.d/rtirq start
 	sudo chrt -f -p 90 `irq_pid rtc0`
-
+	
 	$SETUP_CMD
 	clearup_apps
 	
 	log 'Restoring non-audio setup...'
 
-	# reset computer configuration
+	## reset computer configuration
 	echo -n ondemand | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
 	echo
 	sudo sysctl -w vm.swappiness=$SWAP
@@ -413,11 +423,16 @@ audio_mode() {
 	be_nice 0
 	control_services start
 	keep_awake false
-	#pulseaudio --start &
 	sudo chrt -f -p 50 `irq_pid rtc0`
 	/etc/init.d/rtirq stop
-
+	
 	log 'Exited audio mode'; }
 
 
-audio_mode
+# make sure audio_mode is not already running
+(if ! flock -n 9; then
+   log "Cannot start, as audio_mode is already running ($LOCK_FILE)"
+   exit; fi
+
+ # enter the muscial wonderland
+ audio_mode) 9>"$LOCK_FILE"
